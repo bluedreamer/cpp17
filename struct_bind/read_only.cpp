@@ -11,6 +11,15 @@ class Customer
 public:
    Customer(std::string f, std::string l, long v)
       :first(std::move(f)), last(std::move(l)), val(v) {}
+   Customer(const Customer &c)
+      :first(c.first), last(c.last), val(c.val) 
+   {
+      std::cout << __PRETTY_FUNCTION__ << " OMG, I've been copied\n";
+   }
+   ~Customer()
+   {
+      std::cout << __PRETTY_FUNCTION__ << " OMG, I've been destroyed\n";
+   }
    std::string GetFirst() const { return first; }
    std::string GetLast() const { return last; }
    long GetValue() const { return val; }
@@ -81,8 +90,20 @@ auto get(const Customer &c)
 }
 #endif
 
+void func1();
+void func2();
+
 int main(int argc, char *argv[])
 {
+   func1();
+   func2();
+
+   return 0;
+}
+
+void func1()
+{
+   std::cout << "Enter: " << __PRETTY_FUNCTION__ << std::endl;
    Customer c{"Adrian", "Smith", 103};
 
    auto [f,l,v] = c;
@@ -94,7 +115,22 @@ int main(int argc, char *argv[])
    std::cout << "f/l/v: " << f << ' ' << l << ' ' << v << std::endl;
    std::cout << "c: " << c.GetFirst() << ' ' << c.GetLast() << ' ' << c.GetValue() << std::endl;
    std::cout << "s: " << s << std::endl;
-   return 0;
+   std::cout << "Exit : " << __PRETTY_FUNCTION__ << std::endl;
 }
 
+void func2()
+{
+   std::cout << "Enter: " << __PRETTY_FUNCTION__ << std::endl;
+   Customer c{"Adrian", "Smith", 103};
 
+   auto &[f,l,v] = c;
+
+   std::cout << "f/l/v: " << f << ' ' << l << ' ' << v << std::endl;
+   auto s{std::move(f)};
+   l = "Waters";
+   v+=10;
+   std::cout << "f/l/v: " << f << ' ' << l << ' ' << v << std::endl;
+   std::cout << "c: " << c.GetFirst() << ' ' << c.GetLast() << ' ' << c.GetValue() << std::endl;
+   std::cout << "s: " << s << std::endl;
+   std::cout << "Exit : " << __PRETTY_FUNCTION__ << std::endl;
+}
